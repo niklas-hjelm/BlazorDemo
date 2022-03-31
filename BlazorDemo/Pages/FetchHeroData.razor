@@ -1,0 +1,51 @@
+﻿@page "/fetchherodata"
+
+<PageTitle>Heroes Page</PageTitle>
+
+@using BlazorDemo.Data
+@inject HeroRepository _heroRepository
+
+<h1>Heroes Page</h1>
+
+<p>These are our heroes.</p>
+
+@if (_heroes == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Hero Name</th>
+                <th>Powers</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var hero in _heroes)
+            {
+                <tr>
+                    <td>@hero.Name</td>
+                    <td>@hero.HeroName</td>
+                    <td>
+                        @foreach (var power in @hero.Powers)
+                        {
+                            <p>@power</p>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private ICollection<Hero>? _heroes;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _heroes = _heroRepository.GetAllHeroes();
+    }
+}
