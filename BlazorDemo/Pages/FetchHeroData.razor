@@ -7,6 +7,20 @@
 
 <h1>Heroes Page</h1>
 
+<p>Add another Hero:</p>
+
+<p>
+    <input @bind="Hero.Name"/>
+</p>
+
+<p>
+    <input @bind="Hero.HeroName"/>
+</p>
+<p>
+    <input @bind="Hero.Powers"/>
+</p>
+<button class="btn btn-primary" @onclick="AddHero">Save</button>
+
 <p>These are our heroes.</p>
 
 @if (_heroes == null)
@@ -30,7 +44,7 @@ else
                     <td>@hero.Name</td>
                     <td>@hero.HeroName</td>
                     <td>
-                        @foreach (var power in @hero.Powers)
+                        @foreach (var power in @hero.Powers.Split(','))
                         {
                             <p>@power</p>
                         }
@@ -42,10 +56,20 @@ else
 }
 
 @code {
+    
+    public Hero Hero { get; set; } = new();
+
     private ICollection<Hero>? _heroes;
 
     protected override async Task OnInitializedAsync()
     {
         _heroes = _heroRepository.GetAllHeroes();
     }
+
+    private async Task AddHero()
+    {
+        _heroRepository.CreateHero(Hero.CopyHero(Hero));
+        _heroes = _heroRepository.GetAllHeroes();
+    }
+
 }

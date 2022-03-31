@@ -4,80 +4,66 @@ namespace BlazorDemo.Data
 {
     public class HeroRepository
     {
-        private readonly IDictionary<int, Hero> _heroes;
+        private readonly HeroContext _heroContext;
 
-        private int _id;
-
-        public HeroRepository()
+        public HeroRepository(HeroContext heroContext)
         {
-            _heroes = new Dictionary<int, Hero>();
-            _heroes.Add(_id++, new Hero()
-            {
-                HeroName = "Spider Man", 
-                Name = "Peter Parker", 
-                Powers = new List<string>(){"Agility", "Web shooting", "Spider Sense"}
-            });
-            _heroes.Add(_id++, new Hero()
-            {
-                HeroName = "Captain America",
-                Name = "Steve Rogers",
-                Powers = new List<string>() { "Agility", "Inspiring", "Strong" }
-            });
+            _heroContext = heroContext;
         }
 
         public bool CreateHero(Hero hero)
         {
-            if (_heroes.Values.Contains(hero))
+            if (GetHero(hero.Id) is not null)
                 return false;
-            _heroes.Add(_id++, hero);
+            _heroContext.Heroes.Add(hero);
+            _heroContext.SaveChanges();
             return true;
         }
 
         public ICollection<Hero> GetAllHeroes()
         {
-            return _heroes.Values;
+            return _heroContext.Heroes.ToList();
         }
 
         public Hero? GetHero(int id)
         {
-            if (!_heroes.Keys.Contains(id))
-                return null;
-            return _heroes[id];
+            return _heroContext.Heroes.FirstOrDefault(h => h.Id == id);
         }
 
-        public bool UpdateHero(int id, Hero hero)
-        {
-            if (!_heroes.Keys.Contains(id))
-            {
-                return false;
-            }
+        //public bool UpdateHero(int id, Hero hero)
+        //{
+        //    if (!_heroes.Keys.Contains(id))
+        //    {
+        //        return false;
+        //    }
 
-            _heroes[id] = hero;
+        //    _heroes[id] = hero;
 
-            return true;
-        }
+        //    return true;
+        //}
 
-        public bool UpdateHeroName(int id, string name)
-        {
-            if (!_heroes.Keys.Contains(id))
-            {
-                return false;
-            }
+        //public bool UpdateHeroName(int id, string name)
+        //{
+        //    if (!_heroes.Keys.Contains(id))
+        //    {
+        //        return false;
+        //    }
 
-            _heroes[id].Name = name;
+        //    _heroes[id].Name = name;
 
-            return true;
-        }
+        //    return true;
+        //}
 
         public bool DeleteHero(int id)
         {
-            if (!_heroes.Keys.Contains(id))
+            var heroToDelete = GetHero(id);
+            if (heroToDelete is null)
             {
                 return false;
             }
 
-            _heroes.Remove(id);
-
+            _heroContext.Heroes.Remove(heroToDelete);
+            _heroContext.SaveChanges();
             return true;
         }
     }
