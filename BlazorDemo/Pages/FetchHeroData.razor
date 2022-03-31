@@ -21,6 +21,12 @@
 </p>
 <button class="btn btn-primary" @onclick="AddHero">Save</button>
 
+<p>
+    <input @bind="Id"/>
+</p>
+<button class="btn btn-danger" @onclick="DeleteHero">Delete</button>
+
+
 <p>These are our heroes.</p>
 
 @if (_heroes == null)
@@ -32,6 +38,7 @@ else
     <table class="table">
         <thead>
             <tr>
+                <th>Id</th>
                 <th>Name</th>
                 <th>Hero Name</th>
                 <th>Powers</th>
@@ -41,6 +48,7 @@ else
             @foreach (var hero in _heroes)
             {
                 <tr>
+                    <td>@hero.Id</td>
                     <td>@hero.Name</td>
                     <td>@hero.HeroName</td>
                     <td>
@@ -56,7 +64,9 @@ else
 }
 
 @code {
-    
+
+    public int Id { get; set; }
+
     public Hero Hero { get; set; } = new();
 
     private ICollection<Hero>? _heroes;
@@ -69,6 +79,12 @@ else
     private async Task AddHero()
     {
         _heroRepository.CreateHero(Hero.CopyHero(Hero));
+        _heroes = _heroRepository.GetAllHeroes();
+    }
+
+    private void DeleteHero()
+    {
+        _heroRepository.DeleteHero(Id);
         _heroes = _heroRepository.GetAllHeroes();
     }
 
