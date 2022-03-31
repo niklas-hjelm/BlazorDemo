@@ -6,12 +6,26 @@
 
 <p role="status">Current count: @currentCount</p>
 
+<p>
+    <input @bind="Count"/>
+</p>
+
+<button class="btn btn-primary" @onclick="ApplyCount">Apply Count</button>
+
 <button class="btn btn-primary" @onclick="IncrementCount">Count Up</button>
 
 <button class="btn btn-success" @onclick="DecreaseCount">Count Down</button>
 
 @code {
     private int currentCount = 0;
+
+    private int _count;
+
+    public int Count
+    {
+        get { return _count; }
+        set { _count = value; }
+    }
 
     private void IncrementCount()
     {
@@ -22,4 +36,10 @@
     {
         currentCount--;
     }
+
+    private void ApplyCount()
+    {
+        currentCount += Count;
+    }
+
 }
